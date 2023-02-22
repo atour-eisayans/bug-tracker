@@ -1,0 +1,36 @@
+{
+  "name": "bug-tracker",
+  "version": "1.0.0",
+  "description": "A simple project to complete portfolio",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --detectOpenHandles",
+    "test:coverage": "jest --coverage",
+    "dev": "nodemon index.js",
+    "pg-create-migration": "NODE_CONFIG_DIR=\"$(pwd)/config\" knex migrate:make --migrations-directory ../db/pg/migrations --knexfile config/knexfile.js",
+    "pg-up-latest-migration": "NODE_CONFIG_DIR=\"$(pwd)/config\" knex migrate:latest --migrations-directory ../db/pg/migrations --knexfile config/knexfile.js",
+    "pg-down-latest-migration": "NODE_CONFIG_DIR=\"$(pwd)/config\" knex migrate:rollback --migrations-directory ../db/pg/migrations --knexfile config/knexfile.js",
+    "pg-down-all-migration": "NODE_CONFIG_DIR=\"$(pwd)/config\" knex migrate:rollback --all --migrations-directory ../db/pg/migrations --knexfile config/knexfile.js"
+  },
+  "author": "Atour Eisayans",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "config": "^3.3.9",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
+    "joi": "^17.7.0",
+    "jsonwebtoken": "^9.0.0",
+    "knex": "^2.4.2",
+    "mongoose": "^6.9.2",
+    "pg": "^8.9.0",
+    "supports-color": "^9.3.1",
+    "uuid": "^9.0.0",
+    "winston": "^3.8.2",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "jest": "^29.4.1",
+    "supertest": "^6.3.3"
+  }
+}
