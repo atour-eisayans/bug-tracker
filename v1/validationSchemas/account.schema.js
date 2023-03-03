@@ -46,7 +46,6 @@ const forgetPasswordSchema = Joi.object({
 
 const resetPasswordSchema = Joi.object({
     body: Joi.object({
-        password: Joi.string().required(),
         newPassword: Joi.string().required(),
         repeatPassword: Joi.ref('newPassword'),
     }).external(async (obj) => {

@@ -1,5 +1,5 @@
 const config = require('config');
-const pgConnection = require('../../db/pg/pg.connection');
+const pgClient = require('../../db/pg/pg.client');
 const { DatabaseError } = require('../../errors');
 const logger = require('../../utils/logger');
 
@@ -11,7 +11,7 @@ if (!rolesTbl) throw new Error('something bad happened!');
 
 const insertOne = async ({ email, password, role, type }) => {
     try {
-        const [account = null] = await pgConnection
+        const [account = null] = await pgClient
             .insert({
                 email,
                 password,
@@ -32,11 +32,10 @@ const insertOne = async ({ email, password, role, type }) => {
 
 const findByEmail = async (email) => {
     try {
-        const [account = null] = await pgConnection
+        const [account = null] = await pgClient
             .select('id', 'email', 'role', 'password', 'type')
             .from(accountsTbl)
-            .where('email', email)
-            .andWhere('enabled', true);
+            .where('email', email);
 
         return account;
     } catch (error) {
@@ -50,7 +49,8 @@ const findByEmail = async (email) => {
 
 const findById = async (accountId) => {
     try {
-        const [account = null] = await pgConnection
+        console.log('pgClient: ', pgClient)
+        const [account = null] = await pgClient
             .select('id', 'email', 'role', 'type', 'parent', 'password')
             .from(accountsTbl)
             .where('id', accountId)
@@ -68,7 +68,7 @@ const findById = async (accountId) => {
 
 const findByIdWithPermissions = async (accountId) => {
     try {
-        const [account = null] = await pgConnection
+        const [account = null] = await pgClient
             .select(
                 `${accountsTbl}.id`,
                 `${accountsTbl}.email`,
@@ -93,7 +93,7 @@ const findByIdWithPermissions = async (accountId) => {
 
 const updateLastLogin = async (accountId) => {
     try {
-        await pgConnection(accountsTbl)
+        await pgClient(accountsTbl)
             .where('id', accountId)
             .update('last_login', new Date().toISOString());
     } catch (error) {
@@ -107,7 +107,7 @@ const updateLastLogin = async (accountId) => {
 
 const resetPassword = async (token, password) => {
     try {
-        await pgConnection(accountsTbl)
+        const [account = null] = await pgClient(accountsTbl)
             .whereRaw(
                 'reset_password_token = ? AND reset_token_expire > now() AND enabled = true',
                 [token]
@@ -116,7 +116,10 @@ const resetPassword = async (token, password) => {
                 password,
                 reset_password_token: null,
                 reset_token_expire: null,
-            });
+            })
+            .returning(['id', 'password']);
+
+        return account;
     } catch (error) {
         throw new DatabaseError('Failed updating data', {
             stack: error.stack,
@@ -128,7 +131,7 @@ const resetPassword = async (token, password) => {
 
 const setResetToken = async (email, token, expire) => {
     try {
-        const [account = null] = await pgConnection(accountsTbl)
+        const [account = null] = await pgClient(accountsTbl)
             .where('email', email)
             .andWhere('enabled', true)
             .update({

@@ -14,9 +14,11 @@ const createAccountHandler = async (req, res, next) => {
         const account = await createAccount(accountDetails);
 
         return formatResponse(
-            201,
             {
-                id: account.id,
+                data: {
+                    id: account.id,
+                },
+                statusCode: 201,
             },
             res
         );
@@ -37,10 +39,9 @@ const simpleLoginHandler = async (req, res, next) => {
         const refreshToken = await issueRefreshToken({ id: account.id });
 
         return formatResponse(
-            200,
             {
-                accessToken,
-                refreshToken,
+                data: accessToken,
+                statusCode: 200,
             },
             res
         );
@@ -54,7 +55,13 @@ const forgetPasswordHandler = async (req, res, next) => {
         const { email } = req.body;
         const resetToken = await setResetPasswordToken(email);
 
-        return formatResponse(200, { resetToken }, res);
+        return formatResponse(
+            {
+                data: { resetToken },
+                statusCode: 200,
+            },
+            res
+        );
     } catch (error) {
         return next(error);
     }
@@ -67,7 +74,12 @@ const resetPasswordHandler = async (req, res, next) => {
 
         await resetPasswordByToken(resetToken, newPassword);
 
-        return formatResponse(204, null, res);
+        return formatResponse(
+            {
+                statusCode: 204,
+            },
+            res
+        );
     } catch (error) {
         return next(error);
     }

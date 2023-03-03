@@ -10,6 +10,7 @@ const { generateHash } = require('../../utils/hash');
 const { signJwt, verifyJwt } = require('../../utils/jwt');
 const resetPasswordToken = require('../../utils/resetPasswordToken');
 const { getRoleByType } = require('./role.service');
+const accountTypes = require('../../data/accountTypes');
 
 const tokensConfig = config.get('jwt');
 
@@ -159,7 +160,13 @@ const setResetPasswordToken = async (email) => {
 };
 
 const resetPasswordByToken = async (token, newPassword) => {
-    await accountModel.resetPassword(token, newPassword);
+    const account = await accountModel.resetPassword(token, newPassword);
+    
+    if (!account) {
+        throw new BadRequestError('Token is invalid');
+    }
+
+    return true;
 }
 
 module.exports = {

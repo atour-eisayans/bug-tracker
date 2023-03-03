@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const validateResource = require('../middlewares/validateResource');
 const checkRolePermissions = require('../middlewares/checkRolePermissions');
-const { account: accountsPermissions } = require('../../data/permissions');
+const { request: requestPermissions } = require('../../data/permissions');
 const {
     createRequestHandler,
     approveRequestHandler,
@@ -26,7 +26,7 @@ router.get(
     '/list',
     [
         loginRequired,
-        checkRolePermissions(accountsPermissions.listRequests),
+        checkRolePermissions(requestPermissions.listRequests),
         mustBeFromTypeOf(accountTypes.admin),
         validateResource(listRequestsSchema),
     ],
@@ -37,18 +37,18 @@ router.get(
     '/:requestId',
     [
         loginRequired,
-        checkRolePermissions(accountsPermissions.getRequest),
+        checkRolePermissions(requestPermissions.getRequest),
         mustBeFromTypeOf(accountTypes.admin),
         validateResource(getRequestSchema),
     ],
     getRequestHandler
 );
 
-router.post(
+router.patch(
     '/:requestId/approve',
     [
         loginRequired,
-        checkRolePermissions(accountsPermissions.approveRequest),
+        checkRolePermissions(requestPermissions.approveRequest),
         mustBeFromTypeOf(accountTypes.admin),
         validateResource(approveRequestSchema),
     ],

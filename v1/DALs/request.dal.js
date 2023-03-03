@@ -1,5 +1,5 @@
 const config = require('config');
-const pgConnection = require('../../db/pg/pg.connection');
+const pgClient = require('../../db/pg/pg.client');
 const { DatabaseError } = require('../../errors');
 
 const { accounts: accountsTbl = null, requests: requestsTbl = null } =
@@ -10,7 +10,7 @@ if (!requestsTbl) throw new Error('something bad happened!');
 
 const findByEmail = async (email) => {
     try {
-        const [request = null] = await pgConnection
+        const [request = null] = await pgClient
             .select('id')
             .from(requestsTbl)
             .where('email', email);
@@ -27,7 +27,7 @@ const findByEmail = async (email) => {
 
 const insertOne = async ({ name, email }) => {
     try {
-        const [request = null] = await pgConnection
+        const [request = null] = await pgClient
             .insert({
                 name,
                 email,
@@ -47,7 +47,7 @@ const insertOne = async ({ name, email }) => {
 
 const findAll = async ({ offset, limit }) => {
     try {
-        const requests = await pgConnection
+        const requests = await pgClient
             .select('id', 'name', 'email', 'created_at')
             .from(requestsTbl)
             .orderBy('created_at', 'asc')
@@ -66,7 +66,7 @@ const findAll = async ({ offset, limit }) => {
 
 const findUnapproved = async ({ offset, limit }) => {
     try {
-        const requests = await pgConnection
+        const requests = await pgClient
             .select('id', 'name', 'email', 'created_at')
             .from(requestsTbl)
             .where('approved', false)
@@ -86,7 +86,7 @@ const findUnapproved = async ({ offset, limit }) => {
 
 const findApproved = async ({ offset, limit }) => {
     try {
-        const requests = await pgConnection
+        const requests = await pgClient
             .select('id', 'name', 'email', 'created_at')
             .from(requestsTbl)
             .where('approved', true)
@@ -106,7 +106,7 @@ const findApproved = async ({ offset, limit }) => {
 
 const findById = async (requestId) => {
     try {
-        const [request = null] = await pgConnection
+        const [request = null] = await pgClient
             .select('*')
             .from(requestsTbl)
             .where('id', requestId);
@@ -123,8 +123,9 @@ const findById = async (requestId) => {
 
 const approve = async (requestId) => {
     try {
-        const [request = null] = await pgConnection(requestsTbl)
+        const [request = null] = await pgClient(requestsTbl)
             .where('id', requestId)
+            .andWhere('approved', false)
             .update({
                 approved: true,
                 confirmation_date: new Date(),

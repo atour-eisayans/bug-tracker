@@ -1,5 +1,5 @@
 const config = require('config');
-const pgConnection = require('../../db/pg/pg.connection');
+const pgClient = require('../../db/pg/pg.client');
 const { DatabaseError } = require('../../errors');
 
 const { items: itemsTbl = null, accounts: accountsTbl = null } =
@@ -9,7 +9,7 @@ if (!itemsTbl || !accountsTbl) throw new Error('something bad happened!');
 
 const insertOne = async (itemDetails) => {
     try {
-        const [itemId = null] = await pgConnection
+        const [itemId = null] = await pgClient
             .insert(itemDetails)
             .into(itemsTbl)
             .returning('id');
@@ -26,7 +26,7 @@ const insertOne = async (itemDetails) => {
 
 const findCompanyItems = async (companyId, { limit, offset }) => {
     try {
-        const items = await pgConnection
+        const items = await pgClient
             .select('*')
             .from(itemsTbl)
             .where('creator', companyId)
@@ -43,9 +43,9 @@ const findCompanyItems = async (companyId, { limit, offset }) => {
     }
 };
 
-const findByIdDetails = async (itemId) => {
+const findByIdDetailed = async (itemId) => {
     try {
-        const [item = null] = await pgConnection
+        const [item = null] = await pgClient
             .select(
                 'items.id as id',
                 'items.type as type',
@@ -87,7 +87,7 @@ const findByIdDetails = async (itemId) => {
 
 const findById = async (itemId) => {
     try {
-        const [item = null] = await pgConnection
+        const [item = null] = await pgClient
             .select('*')
             .from(itemsTbl)
             .where('id', itemId);
@@ -104,7 +104,7 @@ const findById = async (itemId) => {
 
 const update = async (itemId, itemDetails) => {
     try {
-        const [item = null] = await pgConnection(itemsTbl)
+        const [item = null] = await pgClient(itemsTbl)
             .where('id', itemId)
             .update({
                 type: itemDetails.type,
@@ -137,7 +137,7 @@ const update = async (itemId, itemDetails) => {
 
 module.exports = {
     insertOne,
-    findByIdDetails,
+    findByIdDetailed,
     findCompanyItems,
     update,
     findById,

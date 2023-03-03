@@ -9,5 +9,5 @@ module.exports = {
 
         return token.toString('hex');
     },
-    expire: () => Date.now() + expiresIn * 1000,
+    expire: () => new Date(Date.now() + expiresIn * 1000).toISOString(),
 };

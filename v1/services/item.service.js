@@ -22,7 +22,7 @@ const createItem = async (itemDetails) => {
 };
 
 const getItemById = async (itemId) => {
-    const item = await itemModel.findByIdDetails(itemId);
+    const item = await itemModel.findByIdDetailed(itemId);
 
     if (!item) {
         throw new NotFoundError('Item was not found!');

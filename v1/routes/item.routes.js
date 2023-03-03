@@ -15,6 +15,9 @@ const {
     updateItemSchema,
 } = require('../validationSchemas/item.schema');
 const loginRequired = require('../../middlewares/loginRequired');
+const cache = require('../middlewares/cache');
+
+const itemCacheIdentifier = (itemId) => `item:${itemId}`;
 
 const router = Router();
 
@@ -44,6 +47,10 @@ router.get(
         loginRequired,
         checkRolePermissions(item.get),
         validateResource(getItemSchema),
+        cache(
+            { prefix: 'item', pathInReq: ['params', 'itemId'] },
+            { forceDelete: true }
+        ),
     ],
     getItemHandler
 );
@@ -54,6 +61,10 @@ router.patch(
         loginRequired,
         checkRolePermissions(item.update),
         validateResource(updateItemSchema),
+        cache(
+            { prefix: 'item', pathInReq: ['params', 'itemId'] },
+            { forceDelete: true }
+        ),
     ],
     updateItemHandler
 );

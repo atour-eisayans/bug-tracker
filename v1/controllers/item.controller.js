@@ -15,7 +15,13 @@ const createItemHandler = async (req, res, next) => {
 
         const item = await createItem(itemDetails);
 
-        return formatResponse(201, item, res);
+        return formatResponse(
+            {
+                data: item,
+                statusCode: 201,
+            },
+            res
+        );
     } catch (error) {
         return next(error);
     }
@@ -27,7 +33,13 @@ const listItemsHandler = async (req, res, next) => {
         const { query } = req;
         const items = await getItems(account, query);
 
-        return formatResponse(200, items, res);
+        return formatResponse(
+            {
+                data: items,
+                statusCode: 200,
+            },
+            res
+        );
     } catch (error) {
         return next(error);
     }
@@ -38,7 +50,14 @@ const getItemHandler = async (req, res, next) => {
         const { itemId } = req.params;
         const item = await getItemById(itemId);
 
-        return formatResponse(200, item, res);
+        return formatResponse(
+            {
+                data: item,
+                statusCode: 200,
+                cacheValue: true,
+            },
+            res
+        );
     } catch (error) {
         return next(error);
     }
@@ -50,7 +69,13 @@ const updateItemHandler = async (req, res, next) => {
         const { itemId } = req.params;
         const updatedItem = await findAndUpdateItem(itemId, itemDetails);
 
-        return formatResponse(200, updatedItem, res);
+        return formatResponse(
+            {
+                data: updatedItem,
+                statusCode: 200,
+            },
+            res
+        );
     } catch (error) {
         return next(error);
     }

@@ -9,11 +9,11 @@ module.exports = {
     port: 3000,
     db: {
         pg: {
-            host: '127.0.0.1',
-            dbName: 'bug_tracker',
-            username: 'postgres',
-            password: '1206318',
-            port: 5432,
+            host: process.env.POSTGRES_HOST,
+            dbName: process.env.POSTGRES_DB_NAME,
+            username: process.env.POSTGRES_USERNAME,
+            password: process.env.POSTGRES_PASSWORD,
+            port: process.env.POSTGRES_PORT,
             tableNames: {
                 accounts: 'acocunts',
                 roles: 'roles',
@@ -22,7 +22,7 @@ module.exports = {
             },
             initialAccount: {
                 name: 'Atour Eisayans',
-                password: '123456',
+                password: process.env.ADMIN_ACCOUNT_DEFAULT_PASSWORD,
                 email: 'atour.admin@gmail.com',
             },
             initialRoles: {
@@ -52,7 +52,12 @@ module.exports = {
             },
         },
         mongodb: {
-            connectionString: 'mongodb://127.0.0.1:27017/bugTracker',
+            connectionString: process.env.MONGODB_URI,
+        },
+        redis: {
+            // Connection String template
+            // redis[s]://[[username][:password]@][host][:port][/db-number]
+            connectionString: process.env.REDIS_URI,
         },
     },
     hashSaltRounds: 10,
@@ -61,7 +66,7 @@ module.exports = {
         item: 'item',
     },
     jwt: {
-        secret: 'some-secret-phrase',
+        secret: process.env.JWT_SECRET,
         defaultTtl: 90000,
         accessToken: {
             ttl: 90000,
@@ -74,4 +79,7 @@ module.exports = {
         tokenBytes: 40,
         expiresIn: 3600,
     },
+    cache: {
+        ttl: 300, // it's in seconds
+    }
 };

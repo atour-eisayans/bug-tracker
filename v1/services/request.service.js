@@ -20,8 +20,8 @@ const emailExistsInRequests = async (email) => {
 const createRequest = async (requestDetails) => {
     const { email, name = null } = requestDetails;
     const emailIsUnique =
-        (await emailExistsInRequests(email)) &&
-        (await emailExistsInAccounts(email));
+        !(await emailExistsInRequests(email)) &&
+        !(await emailExistsInAccounts(email));
 
     if (!emailIsUnique) {
         throw new ConflictError('Email is wrong');

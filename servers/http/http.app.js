@@ -6,7 +6,6 @@ const healthCheckRoute = require('../../middlewares/health-check.http');
 const requestId = require('../../middlewares/requestId');
 const respondDetails = require('../../middlewares/respondDetails');
 const { NotFoundError } = require('../../errors');
-const { runDBs } = require('../../db');
 
 const app = express();
 
@@ -18,7 +17,7 @@ app.use(healthCheckRoute);
 app.use(requestId);
 app.use(respondDetails);
 
-runDBs().then(() => applyHttpRoutes(app));
+applyHttpRoutes(app);
 
 app.use('**', (_, __, next) => next(new NotFoundError('Path not found')));
 
