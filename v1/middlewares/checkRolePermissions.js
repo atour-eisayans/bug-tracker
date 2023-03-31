@@ -10,11 +10,12 @@ module.exports = (rule) => async (req, res, next) => {
     if (!account.permissions) {
         return next(new ForbiddenError());
     }
-    const [category] = rule.toLowerCase().split('/');
+    const [category, operation] = rule.toLowerCase().split('/');
+    const normalizedRule = `${category}/${operation}`;
     const isAllowed = account.permissions.some(
         (permission) => {
             const p = permission.toLowerCase();
-            return p === `${category}/*` || p === rule;
+            return p === `${category}/*` || p === normalizedRule;
         }
     );
 

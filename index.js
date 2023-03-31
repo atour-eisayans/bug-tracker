@@ -1,4 +1,3 @@
-console.log(process.env)
 const config = require('config');
 const httpServer = require('./servers/http/http.server');
 const { runDBs } = require('./db');

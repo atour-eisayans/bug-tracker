@@ -49,7 +49,6 @@ const findByEmail = async (email) => {
 
 const findById = async (accountId) => {
     try {
-        console.log('pgClient: ', pgClient)
         const [account = null] = await pgClient
             .select('id', 'email', 'role', 'type', 'parent', 'password')
             .from(accountsTbl)

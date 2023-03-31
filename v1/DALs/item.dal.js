@@ -27,9 +27,27 @@ const insertOne = async (itemDetails) => {
 const findCompanyItems = async (companyId, { limit, offset }) => {
     try {
         const items = await pgClient
-            .select('*')
-            .from(itemsTbl)
-            .where('creator', companyId)
+            .select(
+                'items.id as id',
+                'items.type as type',
+                'items.title as title',
+                'items.description as description',
+                'items.priority as priority',
+                'items.creator as creator_id',
+                'items.assignee as assignee_id',
+                'items.status as status',
+                'items.due_date as due_date',
+                'creator_account.name as creator_name',
+                'creator_account.email as creator_email'
+            )
+            .from(`${itemsTbl} as items`)
+            .innerJoin(
+                `${accountsTbl} as creator_account`,
+                `items.creator`,
+                `creator_account.id`
+            )
+            .where('creator_account.id', companyId)
+            .orWhere('creator_account.parent', companyId)
             .limit(limit)
             .offset(offset);
 

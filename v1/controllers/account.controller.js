@@ -40,7 +40,10 @@ const simpleLoginHandler = async (req, res, next) => {
 
         return formatResponse(
             {
-                data: accessToken,
+                data: {
+                    accessToken,
+                    refreshToken,
+                },
                 statusCode: 200,
             },
             res
